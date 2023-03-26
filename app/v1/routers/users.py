@@ -1,9 +1,27 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from app.core.database import get_database
+from app.core.schemas import User
+from app.core.lib import serialize
+from app.core.lib.auth.hashing import Hash
+from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
+from app.core.lib.auth import users as UserController
 
 
 
 router = APIRouter(tags=["Users"], prefix="/users")
 
-@router.get("")
-def users():
-    return {"users" : "List of users"}
+
+@router.get("", response_model=list[User.UserOut])
+async def get_all_users(db = Depends(get_database)):
+    return UserController.index(db=db)
+
+
+@router.post("", response_model=User.UserOut)
+async def create_user(request: User.UserIn, db = Depends(get_database)):
+    return UserController.create(request=request, db=db)
+
+@router.get("/{id}", response_model=User.UserOut)
+async def get_single_user(id: str, db = Depends(get_database)):
+    return UserController.show(id=id, db=db)
+
