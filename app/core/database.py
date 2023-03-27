@@ -6,7 +6,7 @@ if not connection_string:
     raise ValueError("Missing MONGODB_ATLAS_CONNECTION_STRING environment variable")
 
 mongo_client = MongoClient(connection_string)
-db = mongo_client.nutrivore
+db = mongo_client.Nutrivore
 
 def get_database():
     return db
