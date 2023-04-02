@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from app.core.lib.auth.hashing import Hash
-from app.core.lib.auth import JWT
+from app.core.repository.auth.hashing import Hash
+from app.core.repository.auth import JWT
 from app.core.database import get_database
 
 

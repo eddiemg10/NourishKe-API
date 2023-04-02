@@ -2,11 +2,11 @@ from fastapi import APIRouter, Depends, status, HTTPException, Query
 from app.core.database import get_database
 from app.core.schemas.Food import FoodOut, FoodBase, FoodUpdate
 from app.core.schemas.NutritionalInfo import NutritionalInfo
-from app.core.lib.auth import oauth2
-from app.core.lib.auth.hashing import Hash
+from app.core.repository.auth import oauth2
+from app.core.repository.auth.hashing import Hash
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
-from app.core.lib.food import FoodController, NutritionController
+from app.core.repository.food import FoodController, NutritionController
 
 
 

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, status, HTTPException, Query
 from app.core.database import get_database
 from app.core.schemas.FoodGroup import FoodGroupOut
-from app.core.lib import serialize
-from app.core.lib.auth.hashing import Hash
+from app.core.repository import serialize
+from app.core.repository.auth.hashing import Hash
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
-from app.core.lib.food import FoodGroupController
+from app.core.repository.food import FoodGroupController
 
 
 

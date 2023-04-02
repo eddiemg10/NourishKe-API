@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from app.core.database import get_database
 from app.core.schemas import User
-from app.core.lib import serialize
-from app.core.lib.auth.hashing import Hash
-from app.core.lib.auth import oauth2
+from app.core.repository import serialize
+from app.core.repository.auth.hashing import Hash
+from app.core.repository.auth import oauth2
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
-from app.core.lib.auth import users as UserController
+from app.core.repository.auth import users as UserController
 
 
 
