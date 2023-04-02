@@ -55,11 +55,12 @@ async def update_food(id: str, request: FoodUpdate, db = Depends(get_database), 
     return FoodController.update(food_update=request, db=db, id=id)
 
 
-@router.delete("/{id}")
-async def delete_food(id: str, db = Depends(get_database), user=Depends(oauth2.get_current_user)):
+@router.delete("/{id}", deprecated=True)
+async def delete_food(id: str, db = Depends(get_database)):
     """
     Deleted a food item by ID
     """
+    raise HTTPException(status_code=status.HTTP_418_IM_A_TEAPOT, detail="Please don't")
     return FoodController.delete(db=db, id=id)
 
 @router.get("/{id}/nutrition", response_model = list[NutritionalInfo])
