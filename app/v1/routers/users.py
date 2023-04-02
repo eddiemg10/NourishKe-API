@@ -3,13 +3,14 @@ from app.core.database import get_database
 from app.core.schemas import User
 from app.core.lib import serialize
 from app.core.lib.auth.hashing import Hash
+from app.core.lib.auth import oauth2
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from app.core.lib.auth import users as UserController
 
 
 
-router = APIRouter(tags=["Users"], prefix="/users")
+router = APIRouter(tags=["Users"], prefix="/users",dependencies=[Depends(oauth2.get_current_user)])
 
 
 @router.get("", response_model=list[User.UserOut])

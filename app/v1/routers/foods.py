@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException, Query
 from app.core.database import get_database
 from app.core.schemas.Food import FoodOut, FoodBase, FoodUpdate
 from app.core.schemas.NutritionalInfo import NutritionalInfo
-from app.core.lib import serialize
+from app.core.lib.auth import oauth2
 from app.core.lib.auth.hashing import Hash
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
@@ -48,7 +48,7 @@ async def get_single_food(id: str, db = Depends(get_database)):
     return FoodController.show(id=id, db=db)
 
 @router.put("/{id}")
-async def update_food(id: str, request: FoodUpdate, db = Depends(get_database)):
+async def update_food(id: str, request: FoodUpdate, db = Depends(get_database), user=Depends(oauth2.get_current_user)):
     """
     Updates a food item with the fields specified
     """
@@ -56,7 +56,7 @@ async def update_food(id: str, request: FoodUpdate, db = Depends(get_database)):
 
 
 @router.delete("/{id}")
-async def delete_food(id: str, db = Depends(get_database)):
+async def delete_food(id: str, db = Depends(get_database), user=Depends(oauth2.get_current_user)):
     """
     Deleted a food item by ID
     """
