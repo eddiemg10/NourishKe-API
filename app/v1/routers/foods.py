@@ -32,7 +32,7 @@ async def add_food(request: FoodBase, db = Depends(get_database)):
     return FoodController.create(request=request, db=db)
 
 
-@router.get("/random", response_model=FoodOut)
+@router.get("/random", response_model=FoodOut, deprecated=True)
 async def get_single_random_food(db = Depends(get_database)):
     """
     Get a random food item

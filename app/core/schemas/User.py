@@ -1,20 +1,18 @@
 from typing import Optional
 from bson import ObjectId
-from pydantic import BaseModel, Field
+from pydantic import ConfigDict, BaseModel, Field
 
 
 class UserBase(BaseModel):
-    email: str = Field(..., example="john@example.com")
-
-    class Config:
-        orm_mode = True
+    email: str = Field(..., examples=["john@example.com"])
+    model_config = ConfigDict(from_attributes=True)
 
 class UserIn(UserBase):
-    password: str = Field(..., example="secret_password")
+    password: str = Field(..., examples=["secret_password"])
 
 
 class UserUpdate(UserBase):
-    password: Optional[str] = Field(None, example="new_secret_password")
+    password: Optional[str] = Field(None, examples=["new_secret_password"])
 
 
 class UserOut(UserBase):
@@ -23,6 +21,4 @@ class UserOut(UserBase):
 
 class User(UserBase):
     id: str = Field(..., alias="_id")
-
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

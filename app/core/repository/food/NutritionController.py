@@ -37,5 +37,7 @@ def showNutrition(id, db):
     }}
     ]
     results = serializeList(db.foodcomponentvalues.aggregate(pipeline))
-    print(results)
+    # db.foodcomponentvalues.aggregate(pipeline)
+    # print(results)
+    print("DOne Processing")
     return results
