@@ -12,7 +12,19 @@ from app.core.repository.food import FoodController, NutritionController
 
 router = APIRouter(tags=["Foods"], prefix="/foods")
 
+from pydantic import BaseModel
+class TagUpdate(BaseModel):
+    GI: int
+    tag: str
 
+@router.get("/tag")
+async def get_untagged_foods(db = Depends(get_database)):
+    return FoodController.noGI(db)
+
+@router.put("/tag/{id}")
+async def tag_food(id: str, request:TagUpdate, db = Depends(get_database)):
+    return FoodController.update(id, request, db)
+    
 @router.get("", response_model=list[FoodOut])
 async def get_foods(db = Depends(get_database),
                     page: int = Query(1, description="Page number, starting from 1"),

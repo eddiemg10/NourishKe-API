@@ -7,6 +7,13 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from random import randint
 
+
+def noGI(db):
+    foods = db.foods.find({ "GI": { "$exists": False } })
+    # return len(serializeList(foods))
+    return serializeList(foods)
+
+
 def index(page, size, db, groups):
     skip = (page - 1) * size
     if groups:
