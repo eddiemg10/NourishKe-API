@@ -7,14 +7,14 @@ def recommend():
         "name": "Eddie",
         "bmi" : 23,
         "pal" : "very active",
-        "eer" : 2600
+        "eer" : 2700
     }
     fact = Fact(patient)
 
-    # test -> If bmi is between 1 and 10 and eer is less greater than 2650 then recommend food X
-    ant1 = Antecedent(value=8, operation=Operation.between , reference=[1, 10])
-    ant2 = Antecedent(value=12500, operation=Operation.greater , reference=2650)
-    cons1 = Consequent("Recommend Food X")
+    # test -> If bmi is between 20 and 30 and eer is less greater than 2650 then recommend foods high in energy
+    ant1 = Antecedent(value=fact.bmi, operation=Operation.between , reference=[20, 30])
+    ant2 = Antecedent(value=fact.eer, operation=Operation.greater , reference=2650)
+    cons1 = Consequent({"energy": "high"})
 
     rule = ProductionRule(antecedents=[ant1, ant2], consequents=[cons1])
     return rule.execute()

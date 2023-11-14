@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
-from .routers import auth, users, foods, food_groups, health_metrics, recommendations
+from .routers import auth, users, foods, food_groups, health_metrics, recommendations, profiles
 
 
 router = APIRouter(prefix="/v1")
@@ -10,6 +10,7 @@ router.include_router(foods.router)
 router.include_router(food_groups.router)
 router.include_router(health_metrics.router)
 router.include_router(recommendations.router)
+router.include_router(profiles.router)
 
 
 @router.get("/home")

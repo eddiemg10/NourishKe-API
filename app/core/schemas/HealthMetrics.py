@@ -6,6 +6,17 @@ class Gender(str, Enum):
     male = "male"
     female = "female"
 
+class GlucoseTest(str, Enum):
+    A1C = "A1C"
+    random = "random"
+    fasting = "fasting"
+    tolerance = "tolerance"
+
+class BloodSugarUnits(str, Enum):
+    mg_dL = "mg/dL",
+    mmol_L = "mmol/L",
+    percentage = "%"
+
 class PALType(str, Enum):
     inactive = "inactive"
     low_active = "low active"
@@ -36,6 +47,20 @@ class PAL(BaseModel):
 
 class PALIn(PAL):
     time: float = Field(description="Amount of time spent doing activity in hours", example=3)
+
+class BloodSugar(BaseModel):
+    value: float = Field(description="Value of blood sugar readings", example=120)
+    units: BloodSugarUnits = Field(description="Units of the blood sugar value: mg/dL or mmol/l", example="mg/dL")
+
+class BloodSugarIn(BloodSugar):
+    test: GlucoseTest = Field(description="Type of blood sugar test", example="random") 
+
+class BloodSugarOut(BaseModel):
+    blood_sugar_level: list[BloodSugar] = Field(description="Original value of blood sugar readings converted into both formats")
+    test: GlucoseTest = Field(description="Type of blood sugar test", example="random")
+    level: str = Field(description="Interpretation of the readings")
+
+
 
 # [
 #   {

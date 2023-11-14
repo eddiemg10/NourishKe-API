@@ -104,5 +104,6 @@ class ProductionRule():
 
     def execute(self):
         if self.evaluate():
-            for action in self.consequents:
-                action.execute()
+            return self.consequents
+            # for action in self.consequents:
+            #     action.execute()
