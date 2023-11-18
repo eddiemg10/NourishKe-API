@@ -10,6 +10,10 @@ class Operation(Enum):
     greater = "greater"
     between = "between"
 
+class Logic(Enum):
+    AND = "AND"
+    OR = "OR"
+
 class Antecedent():
     """
     A class used to represent the entecedent of a rule
@@ -70,8 +74,6 @@ class Antecedent():
             return self.fact_value < self.reference_value
         
         elif self.operation == Operation.equals:
-            validateNumber(self.fact_value)
-            validateNumber(self.reference_value)
             return self.fact_value == self.reference_value
 
 class Consequent():
@@ -80,10 +82,10 @@ class Consequent():
         self.action = action
 
     def execute(self):
-        print(self.action)
+        return self.action
     
 class ProductionRule():
-    def __init__(self, antecedents: list[Antecedent], consequents: list[Consequent]):
+    def __init__(self, query, antecedents: list[Antecedent], consequents: list[Consequent], logic=Logic.AND):
         """
         Parameters
         ----------
@@ -92,18 +94,28 @@ class ProductionRule():
         `consequents`: list
             A list of consequents to be executed if all antecedents evaluate to True
         """
-     
+        
+        self.query = query
         self.antecedents = antecedents
         self.consequents = consequents
+        self.logic = logic
 
     def evaluate(self):
-        for condition in self.antecedents:
-            if not condition.evaluate():
-                return False
-        return True
-
+        if(self.logic == Logic.AND):
+            for condition in self.antecedents:
+                if not condition.evaluate():
+                    return False
+            return True
+        elif(self.logic == Logic.OR):
+            true_antedendents = 0
+            for condition in self.antecedents:
+                if condition.evaluate():
+                    true_antedendents += 1
+            return true_antedendents > 0
     def execute(self):
         if self.evaluate():
-            return self.consequents
-            # for action in self.consequents:
-            #     action.execute()
+            for action in self.consequents:
+                self.query.append(action.execute())
+            return self.query
+
+
