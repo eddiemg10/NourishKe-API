@@ -29,4 +29,8 @@ class Fact():
         self.blood_sugar_level = patient['blood_sugar_level']
         self.cuisine = patient['cuisine']
         self.exclude = patient['exclude']
+
+    def update(self, updates):
+        for key, value in updates.items():
+            setattr(self, key , value)
         

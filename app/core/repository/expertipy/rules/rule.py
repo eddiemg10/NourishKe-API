@@ -82,10 +82,15 @@ class Consequent():
         self.action = action
 
     def execute(self):
-        return self.action
+        new_dict =  {k: v for k, v in self.action.items() if k != "fact_updates"}
+        return new_dict
+    
+    def updateFact(self):
+        fact_update =  {k: v for k, v in self.action.items() if k == "fact_updates"}
+        return fact_update.get("fact_updates")
     
 class ProductionRule():
-    def __init__(self, query, antecedents: list[Antecedent], consequents: list[Consequent], logic=Logic.AND):
+    def __init__(self, id, query, fact, antecedents: list[Antecedent], consequents: list[Consequent], logic=Logic.AND):
         """
         Parameters
         ----------
@@ -94,8 +99,9 @@ class ProductionRule():
         `consequents`: list
             A list of consequents to be executed if all antecedents evaluate to True
         """
-        
+        self.id = id
         self.query = query
+        self.fact = fact
         self.antecedents = antecedents
         self.consequents = consequents
         self.logic = logic
@@ -114,8 +120,12 @@ class ProductionRule():
             return true_antedendents > 0
     def execute(self):
         if self.evaluate():
-            for action in self.consequents:
-                self.query.append(action.execute())
-            return self.query
+            for consequent in self.consequents:
+                self.query.append(consequent.execute())
+                fact_updates = consequent.updateFact()
+                if fact_updates:
+                    self.fact.update(fact_updates)
+
+            return (self.query, self.fact)
 
 

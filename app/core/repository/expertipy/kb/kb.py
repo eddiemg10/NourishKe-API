@@ -9,25 +9,38 @@ class KB():
         self.Explanations = ExplanationModule(fact)
         self.query = []
         self.rules = []
-        # Rule 1: (Hypoglycemia) If Hypoglycemia detected
-        self.ant1 = Antecedent(value=fact.blood_sugar_level, operation=Operation.equals , reference="hypoglycemic")
-        # if person if hypoglycemic, check whether it's sports induced
-        self.ant2 = Antecedent(value=fact.pal, operation=Operation.equals, reference=PALType.very_active) # Sports induced Hypoglycemia
-        self.ant3 = Antecedent(value=fact.pal, operation=Operation.equals, reference=PALType.active) # Sports induced Hypoglycemia
+        self.fact = fact
+        
 
-        self.cons1 = Consequent({
+        # Rule 1: (Hypoglycemia) If Hypoglycemia detected
+        self.ant_is_hypoglycemic = Antecedent(value=fact.blood_sugar_level, operation=Operation.equals , reference="hypoglycemic")
+        # if person if hypoglycemic, check whether it's sports induced
+        self.ant_is_very_active = Antecedent(value=fact.pal, operation=Operation.equals, reference=PALType.very_active) # Sports induced Hypoglycemia
+        self.ant_is_active = Antecedent(value=fact.pal, operation=Operation.equals, reference=PALType.active) # Sports induced Hypoglycemia
+
+        self.ant_is_active_individual = Antecedent(value=getattr(self.fact, "is_an_active_person", None), operation=Operation.equals, reference=True)
+        
+        ###############################################################
+        
+        self.cons_sports_hypoglycemia = Consequent({
             "explanation" : self.Explanations.x_sport_induced_hypoglycemia,
+            "fact_updates" : {"has_sports_hypoglycemia": True},
             "filter": {
                 "GI" : ("Medium", fact.blood_sugar_history[0])
             }
         })
 
-        self.cons2 = Consequent({
+        self.cons_active_individual = Consequent({
             "explanation" : self.Explanations.x_active_person,
+            "fact_updates" : {"is_an_active_person": True},
         })
                
     
-    def build(self):
-        # Rule 2: Active or not active?
-        self.rules.append(ProductionRule(query=self.query, antecedents=[self.ant2, self.ant3], consequents=[self.cons2], logic=Logic.OR))
+    def build(self, fact):
+        self.fact = fact
+
+        # Rule 1: Active or not active?
+        self.rules.append(ProductionRule(id=1, query=self.query, fact=self.fact, antecedents=[self.ant_is_very_active, self.ant_is_active], consequents=[self.cons_active_individual], logic=Logic.OR))
+        # If active and hypoglycemic, then patient is exposed to sports induced hypoglycmia
+        self.rules.append(ProductionRule(id=2, query=self.query, fact=self.fact, antecedents=[self.ant_is_hypoglycemic, self.ant_is_active], consequents=[self.cons_sports_hypoglycemia], logic=Logic.AND))
         return self.rules

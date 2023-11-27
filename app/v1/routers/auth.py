@@ -18,13 +18,14 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db = Depends(get_datab
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Account with this email does not exist"
         )
 
-    if not Hash.verify(request.password, user.password):
+    print(request.password, user['password'])
+    if not Hash.verify(request.password, user['password']):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Password does not match the email",
         )
 
     # access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = JWT.create_access_token(data={"sub": user.email})
+    access_token = JWT.create_access_token(data={"sub": user['email']})
     return {"access_token": access_token, "token_type": "bearer"}
 

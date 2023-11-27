@@ -25,14 +25,14 @@ def recommend():
         "date": "2023-11-18T16:27:36.309Z"
       }
     ],
-    "blood_sugar_level": "normal",
+    "blood_sugar_level": "hypoglycemic",
     "cuisine": [
       "indian"
     ],
     "exclude": [
       "meat"
     ],
-    "_id": "string"
+    "_id": "string",
   }
     fact = Fact(patient)
 
@@ -45,8 +45,29 @@ def recommend():
     # rule = ProductionRule(antecedents=[ant1, ant2], consequents=[cons1], logic="OR")
     query = []
     knowledge_base = KB(fact)
-    rules = knowledge_base.build()
-    for rule in rules:
-        
-        query.append(rule.execute())
-    return query
+    rules = knowledge_base.build(fact)
+    visited_rules = set()
+    # for rule in rules:
+    #     query.append(rule.execute())
+    # return query
+
+    ctr = 0
+    while ctr < 3:
+      rule_triggered = False
+      knowledge_base = KB(fact)
+      # print(vars(fact), "\n\n")
+      rules = knowledge_base.build(fact)
+      # print(vars(knowledge_base.fact), "\n\n")
+      for rule in rules:
+        if rule.evaluate() and rule.id not in visited_rules:
+          query_builder, fact = rule.execute()  # Pass the fact to execute method
+          visited_rules.add(rule.id)
+          print(visited_rules)
+          rule_triggered = True
+      ctr += 1
+
+      if not rule_triggered:
+        print("No match found")
+        break
+    return query_builder
+      
