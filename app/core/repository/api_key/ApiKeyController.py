@@ -49,8 +49,14 @@ def create(request: ApiKeyIn, db, user):
 
 def update(id: str, request: ApiKey, db):
     helpers.verifyId(id)
-    result = db.profiles.update_one({"_id": ObjectId(id)}, {"$set": request.model_dump(exclude_unset=True)})
+    result = db.apikeys.update_one({"_id": ObjectId(id)}, {"$set": request.model_dump(exclude_unset=True)})
     if not result:
-        raise HTTPException(status_code=404, detail="Patient profile not found")
-    # updated_profile = db.foods.find_one({"_id": ObjectId(id)})
+        raise HTTPException(status_code=404, detail="Api Key not found")
     return show(id, db)
+
+def delete(id: str, db):
+    helpers.verifyId(id)
+    result = db.apikeys.delete_one({"_id": ObjectId(id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="API Key not found")
+    return {"message": "API Key deleted successfully"}

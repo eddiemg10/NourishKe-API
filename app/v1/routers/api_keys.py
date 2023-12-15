@@ -24,8 +24,10 @@ async def get_api_keys(db = Depends(get_database), user=Depends(oauth2.get_curre
 
 
 @router.post("", response_model=ApiKey.ApiKeyOut)
-# @router.post("")
 async def generate_api_key(request: ApiKey.ApiKeyIn, db = Depends(get_database), user=Depends(oauth2.get_current_user)):
+    """
+    Generat an API Key
+    """
     return ApiKeyController.create(request=request, db=db, user=user)
 
 @router.get("/{id}", response_model=ApiKey.ApiKey)
@@ -33,6 +35,9 @@ async def get_single_api_key(id: str=Path(description="API key"), db = Depends(g
     return ApiKeyController.show(id=id, db=db)
 
 @router.patch("/{id}")
-async def update_api_key(request: ApiKey.ApiKey, id: str=Path(description="ID of API Key to update"),  db = Depends(get_database)):
+async def update_api_key(request: ApiKey.ApiKeyUpdate, id: str=Path(description="ID of API Key to update"),  db = Depends(get_database)):
     return ApiKeyController.update(id, request=request, db=db)
 
+@router.delete("/{id}")
+async def update_api_key(id: str=Path(description="ID of API Key to delete"),  db = Depends(get_database)):
+    return ApiKeyController.delete(id, db=db)

@@ -17,4 +17,6 @@ class ApiKeyOut(BaseModel):
     key: str = Field(None, description="Value of the API Key, only displayed once", example="okOcQ2tMeLE5bTCW3-qP3feTjgYy6s8M")
     message: str = Field("This key will only be displayed once. Make sure you keep it safe", description="Message", example="This key will only be displayed once. Make sure you keep it safe")
 
-
+class ApiKeyUpdate(BaseModel):
+    description: str = Field(None, description="Description of what the key is for", example="API Key for the NourishKe App") 
+    active: bool = Field(description="Status of the API Key") 
