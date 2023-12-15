@@ -18,7 +18,7 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db = Depends(get_datab
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Account with this email does not exist"
         )
 
-    print(request.password, user['password'])
+    # print(request.password, user['password'])
     if not Hash.verify(request.password, user['password']):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

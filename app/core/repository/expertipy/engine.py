@@ -69,5 +69,5 @@ def recommend():
       if not rule_triggered:
         print("No match found")
         break
-    return query_builder
+    return fact
       
