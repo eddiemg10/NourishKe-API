@@ -25,8 +25,8 @@ def verify(key, db):
 def create(request: ApiKeyIn, db, user):
     # Generate new API Key of 24 bytes long
     generated_key = secrets.token_urlsafe(24)
-    display_key = f"{generated_key[:4]}{'X' * 26}{generated_key[30:]}"
-    hashed_key = Hash.encrypt(generated_key)
+    display_key = f"{generated_key[:4]}{'*' * 26}{generated_key[30:]}"
+    hashed_key = Hash.sha256(generated_key)
     key = {
         "value": hashed_key,
         "user": user['email'], 

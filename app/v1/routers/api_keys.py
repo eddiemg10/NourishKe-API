@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, status, HTTPException, Path
+from fastapi import APIRouter, Depends, status, HTTPException, Path, Security
+from fastapi.security import APIKeyHeader, APIKeyQuery
 from app.core.database import get_database
 from app.core.schemas import User
 from app.core.schemas import ApiKey
@@ -30,7 +31,7 @@ async def generate_api_key(request: ApiKey.ApiKeyIn, db = Depends(get_database),
     """
     return ApiKeyController.create(request=request, db=db, user=user)
 
-@router.get("/{id}", response_model=ApiKey.ApiKey)
+@router.get("/{id}", response_model=ApiKey.ApiKey, deprecated=True)
 async def get_single_api_key(id: str=Path(description="API key"), db = Depends(get_database)):
     return ApiKeyController.show(id=id, db=db)
 
