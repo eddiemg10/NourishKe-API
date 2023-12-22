@@ -8,6 +8,7 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from .. import helpers
 import secrets
+import datetime
 
 
 def index(email, db):
@@ -32,7 +33,8 @@ def create(request: ApiKeyIn, db, user):
         "user": user['email'], 
         "description": request.description,
         "display": display_key,
-        "active": True
+        "active": True,
+        "createdAt": datetime.datetime.now()
     }
     
     try:
