@@ -1,5 +1,5 @@
 
-from ....schemas.HealthMetrics import PALType, BloodSugar
+from ....schemas.HealthMetrics import PALType, BloodSugar, PALOut, Gender
 from ....schemas.Profile import BloodSugarEntry
 
 class Fact():
@@ -7,12 +7,13 @@ class Fact():
     weight: int 
     bmi: float
     age: int 
-    location: str | None
-    pal: PALType
+    gender: str
+    coords: tuple
+    pal: PALOut
     eer: float 
     HbA1C: BloodSugar | None
     blood_sugar_history: list[BloodSugarEntry] | None
-    blood_sugar_level: str
+    # blood_sugar_level: str
     cuisine: list[str] | None
     exclude: list[str] | None
 
@@ -21,12 +22,13 @@ class Fact():
         self.weight = patient['weight']
         self.bmi = patient['bmi']
         self.age = patient['age']
-        self.location = patient['location']
+        self.gender = patient['gender']
+        self.coords = patient['coords'] 
         self.pal = patient['pal']
         self.eer = patient['eer']
         self.HbA1C = patient['HbA1C']
         self.blood_sugar_history = patient['blood_sugar_history']
-        self.blood_sugar_level = patient['blood_sugar_level']
+        # self.blood_sugar_level = patient['blood_sugar_level']
         self.cuisine = patient['cuisine']
         self.exclude = patient['exclude']
 

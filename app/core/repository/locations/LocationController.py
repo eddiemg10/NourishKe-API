@@ -102,11 +102,11 @@ def find_county_and_highlight(coordinate, highlight=True, image_flag = False):
 
         # Create a GeoDataFrame with the selected region
         counties_in_region = []
-        print(mapping[region])
+        # print(mapping[region])
         for idx, county in counties_df.iterrows():
             if county['COUNTY'] in mapping[region]:
                 counties_in_region.append(county)
-                print(f"Added {county['COUNTY']}")
+                # print(f"Added {county['COUNTY']}")
         highlighted_region_gdf = gpd.GeoDataFrame(counties_in_region, geometry='geometry')
 
         # Plot all counties in the original color (e.g., light gray) and the selected county in red

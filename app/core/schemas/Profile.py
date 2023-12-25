@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 from bson import ObjectId
 from pydantic import ConfigDict, BaseModel, Field
-from .HealthMetrics import PALType, BloodSugar, BloodSugarIn
+from .HealthMetrics import PALType, BloodSugar, BloodSugarIn, Gender
 
 class BloodSugarEntry(BloodSugarIn):
     date: datetime
@@ -11,6 +11,7 @@ class Profile(BaseModel):
     height: float = Field(None, description="Height of patient in cm", example=180)
     weight: int = Field(None, description="Weight of patient in kg", example=65)
     age: int = Field(None, description="Age of the patient", example=19)
+    gender: Gender = Field(None, description="Gender of the patient", example=19)
     location: str = Field(None, description="General Location Area of user", example="coast")
     pal: PALType = Field(None, description="Physical Activity Level", example="inactive")
     eer: float = Field(None, description="Estimated Energy requirement value", example = 2500.6)

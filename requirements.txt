@@ -7,8 +7,8 @@ passlib
 bcrypt
 python-jose
 python-multipart
-bson
 pandas
 geopandas
 shapely
 firebase_admin
+matplotlib

@@ -48,6 +48,10 @@ class PAL(BaseModel):
 class PALIn(PAL):
     time: float = Field(description="Amount of time spent doing activity in hours", example=3)
 
+class PALOut(BaseModel):
+    pal: PALType = Field(description="Physical Activity Level", example="very active")
+    value: float = Field(description="PAL value", example=2.5041)
+
 class BloodSugar(BaseModel):
     value: float = Field(description="Value of blood sugar readings", example=120)
     units: BloodSugarUnits = Field(description="Units of the blood sugar value: mg/dL or mmol/l", example="mg/dL")

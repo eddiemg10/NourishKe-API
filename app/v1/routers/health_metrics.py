@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from app.core.database import get_database
 from app.core.repository.healthmetrics import amdr, bmi, eer, pal, blood_sugar
-from app.core.schemas.HealthMetrics import EEROut, EERIn, BmiOut, BmiIn, PAL, PALIn, BloodSugarUnits, BloodSugarIn, BloodSugarOut
+from app.core.schemas.HealthMetrics import EEROut, EERIn, BmiOut, BmiIn, PAL, PALIn, PALOut, BloodSugarUnits, BloodSugarIn, BloodSugarOut
 
 
 router = APIRouter(tags=["Health metrics"], prefix="/healthmetrics")
@@ -17,7 +17,7 @@ async def calculate_bmi(request: BmiIn):
 async def get_physical_activity_level_activities():
     return pal.retrieve_pal_activites()
 
-@router.post("/pal")
+@router.post("/pal", response_model=PALOut)
 async def determine_physical_activity_level(request: list[PALIn]):
     return pal.calculate_pal(request)
 

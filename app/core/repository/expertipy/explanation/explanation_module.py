@@ -16,9 +16,35 @@ class ExplanationModule():
             link="https://www.cdc.gov/diabetes/basics/low-blood-sugar-treatment.html"),
         
         self.x_sport_induced_hypoglycemia = Explanation(
-            text=f"Your activity level is  {fact.pal}. This indicates that you are in danger of 'Sport induced Hpoglycemia. This may be because you did not eat low GI food before physically demanding activity and either ate nothing after the activity or ate low GI foods afterwards. Medium GI foods have been recommended as a result since you're diabetic'",
+            text=f"Your activity level is  {fact.pal['pal']}. This indicates that you are in danger of 'Sport induced Hpoglycemia. This may be because you did not eat low GI food before physically demanding activity and either ate nothing after the activity or ate low GI foods afterwards. Medium GI foods have been recommended as a result since you're diabetic'",
         link="https://www.gifoundation.com/nutrition/low-blood-sugar/#:~:text=Sport%20induced%20Hypoglycemia,a%20lot%20better."),
 
         self.x_active_person = Explanation(
-            text=f"Your activity level ({fact.pal}) indicates you engage in physically demanding tasks"
+            text=f"Your activity level ({fact.pal['pal']}) indicates you engage in physically demanding tasks"
         ),
+
+        self.x_pal = Explanation(
+            text=f"Based on the activities you engage in, Your estimated Basal Metabolic Rate (BMR) over 24 hours is {fact.pal['value']}, which indicates a Phsical Activity Level (PAL) of {fact.pal['pal']}",
+        link="Link to docs"), #TODO: Link to docs
+
+        self.x_estimaed_energy_requirements = Explanation(
+            text=f"Based on your age ({fact.age}), gender ({fact.gender}) and PAL ({fact.pal['pal']}) your daily Estimated Energy Requirements is {fact.eer} kcal. The recommended foods have been curated to meet this requirement",
+        link="Link to docs"), #TODO: Link to docs
+
+        self.x_cuisine = Explanation(
+            text=f"You have a cuisine preference: {fact.cuisine}, which has also been used to filter food recommendations"
+        )
+
+        self.x_exclusions = Explanation(
+            text=f"Some foods have been excluded: {fact.exclude}"
+        )
+
+    def x_location(self, location):
+        return Explanation(
+            text=f"Your location has been mapped to be in {location['county']} county in the {location['region']} region. The recommended foods have therefore factored this in mind",
+        link=location['image'])
+    
+    def x_sugar_levels(self, levels):
+        return Explanation(
+            text=f"Your blood sugar levels : {levels['blood_sugar_level'][0]['value']} {levels['blood_sugar_level'][0]['units']} indicate a {levels['level']} blood sugar level. The recommended foods have therefore factored this in mind",
+        link="Link to docs") #TODO: link to docs

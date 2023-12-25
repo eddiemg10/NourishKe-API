@@ -9,6 +9,7 @@ class Operation(Enum):
     lesser = "lesser"
     greater = "greater"
     between = "between"
+    exists = "exists"
 
 class Logic(Enum):
     AND = "AND"
@@ -26,7 +27,7 @@ class Antecedent():
             self, 
             value: int | float | str, 
             operation: Operation, 
-            reference: int | float | str | list | tuple,
+            reference: int | float | str | list | tuple | None,
             ):
         """
         Parameters
@@ -75,6 +76,9 @@ class Antecedent():
         
         elif self.operation == Operation.equals:
             return self.fact_value == self.reference_value
+        
+        elif self.operation == Operation.exists:
+            return self.fact_value != None
 
 class Consequent():
     
