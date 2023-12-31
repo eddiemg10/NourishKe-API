@@ -83,3 +83,53 @@ def random(db):
     if random_food is None:
         raise HTTPException(status_code=404, detail="No food items found")
     return serializeDict(random_food)
+
+def filter(db, query, sort_by="GI"):
+    # Define the base query
+    base_query = {}
+
+    # Check if "GI" filter is provided
+    if "GI" in query:
+        min_gi, max_gi = query["GI"]
+        base_query["GI"] = {"$gte": min_gi, "$lte": max_gi}
+
+    # Check other filters
+    if "location" in query:
+        base_query["location"] = query["location"]
+
+    if "group" in query:
+        # groups = []
+        # # for grp in query["group"]:
+        # #     groups.append(grp)
+        # base_query["foodgroup_id"] = {"$in": [ObjectId(query["group"])]}
+        groups = query["group"]
+        base_query["foodgroup_id"] = {"$in": [ObjectId(group) for group in groups]}
+
+    if "tags" in query:
+        tags_query = {"tag": {"$regex": f'{query["tags"]},|,{query["tags"]}$|^ {query["tags"]},|, {query["tags"]},|, {query["tags"]}$'}}
+        base_query.update(tags_query)
+
+    if "exclude" in query:
+        base_query["group"] = {"$ne": query["exclude"]}
+
+    # Sort by the specified field (default: "GI")
+    sort_field = sort_by if sort_by in ["GI", "location", "group", "tags"] else "GI"
+    cursor = db.foods.find(base_query).sort(sort_field)
+
+    grouped_results = {}
+    for food in serializeList(cursor):
+        group_id = str(food.get("foodgroup_id", ""))
+        if group_id not in grouped_results:
+            grouped_results[group_id] = []
+        grouped_results[group_id].append(food)
+
+    # for group_id, foods in grouped_results.items():
+    #     grouped_results[group_id] = sorted(foods, key=lambda x: x.get("GI", 0))
+    print(grouped_results)
+    return grouped_results
+    return serializeDict(grouped_results)
+    # Perform the query
+    result = serializeList(cursor)
+    # result = serializeList(db.foods.find(base_query))
+
+    return result

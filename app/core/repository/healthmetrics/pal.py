@@ -41,7 +41,7 @@ def calculate_pal(request):
         total += (activity.par * activity.time)
     
     if(hours > 24):
-        return HTTPException(status_code=400, detail=f"Sum total of daily activities cannot exceed 24 hours. Received {hours} hours")
+        raise HTTPException(status_code=400, detail=f"Sum total of daily activities cannot exceed 24 hours. Received {hours} hours")
     
     mean_pal = total/24
 

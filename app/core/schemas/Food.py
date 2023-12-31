@@ -10,6 +10,9 @@ class FoodBase(BaseModel):
     scientific_name: str = Field(description="Scientific name of the food", examples=["Amaranthus spp"])
     foodgroup_id: str = Field(description="reference to the group the food belongs in", examples=["64204d95b840774efbbe6cb0"])
     biblio_id: str|None = Field(None, description="", examples=["KEN93-59, US28-20001,IN17-A001,IN17-A002"])
+    GI: float|None = Field(None, description="Glycemic index of food", examples=["55"])
+    tag: str|None = Field(None, description="Comma separated tags", examples=["grains"])
+    location: str|None = Field(None, description="Location of food", examples=["coast"])
     model_config = ConfigDict(from_attributes=True)
 
 class FoodUpdate(BaseModel):

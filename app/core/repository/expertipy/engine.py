@@ -3,8 +3,14 @@ from app.core.repository.expertipy.rules.rule import *
 from app.core.repository.expertipy.kb.kb import KB
 from app.core.repository.food import FoodController, FoodGroupController
 from app.core.repository.expertipy.explanation.explanation_module import Explanation
+from app.core.database import get_database
+from fastapi import Depends
+
 
 def recommend():
+    
+   
+
     # Build a fact
 
     patient =   {
@@ -16,15 +22,16 @@ def recommend():
     "coords": (39,-3),
     "pal": {"pal":"active", "value": 2.43},
     "eer": 2500.6,
-    "HbA1C": {
-      "value": 120,
-      "units": "mg/dL"
-    },
+    # "HbA1C": {
+    #   "value": 70,
+    #   "units": "mg/dL"
+    # },
+    "HbA1C": None,
     "blood_sugar_history": [
       {
-        "value": 120,
+        "value": 69,
         "units": "mg/dL",
-        "test": "random",
+        "test": "fasting",
         "date": "2023-11-18T16:27:36.309Z"
       }
     ],
@@ -77,12 +84,54 @@ def recommend():
     sugar_level = getattr(fact, "blood_sugar_level", None)['level']
     carb_percentage, protein_percentage, fat_percentage = getAMDR(query_builder, sugar_level)
     
-    carbs_from_calories = carb_percentage/100*fact.eer
-    carbs_from_protein = protein_percentage/100*fact.eer
-    carbs_from_fat = fat_percentage/100*fact.eer
+    cals_from_carbs = carb_percentage/100*fact.eer
+    cals_from_protein = protein_percentage/100*fact.eer
+    cals_from_fat = fat_percentage/100*fact.eer
+
     
     # return (carb_percentage, protein_percentage, fat_percentage)
+
+    foods = FoodController.index(page=1, size=600 , db=get_database(), groups=None)
     
+    # return query_builder
+    FG = FoodGroups()
+    food_plan = {}
+    number_of_meals = 5
+    if number_of_meals == 5:
+      kcal_distribution = meal_calory_distribution(number_of_meals, fact.eer)
+      breakfast_kcal, morning_snack_kcal, lunch_kcal, afternoon_snack, dinner_kcal = kcal_distribution
+      breakfast_filter =  {
+      "GI": (0, 85), 
+      "group": [FG.beverages, FG.cereals, FG.startchy_roots, FG.fruits], 
+      "tags": "breakfast", 
+      # "exclude": "1234"
+      }
+      breakfast_results = FoodController.filter(get_database(), breakfast_filter)
+      food_plan.update({"breakfast": breakfast_results})
+
+      main_meal_filter = {
+      "GI": (0, 85), 
+      "group": [FG.mixed, FG.vegetables, FG.legumes, FG.meats_and_poultry, FG.fruits], 
+      "tags": "", 
+      # "exclude": "1234"
+      }
+      main_meal_results = FoodController.filter(get_database(), main_meal_filter)
+      food_plan.update({"main_meal": main_meal_results})
+              
+    else:
+      kcal_distribution = meal_calory_distribution(number_of_meals, fact.eer)
+      breakfast_kcal, lunch_kcal, dinner_kcal = kcal_distribution
+
+
+    # filter =  {
+    #   "GI": (0, 55), 
+    #   # "location": "coast",
+    #   "group": "653e83acfe351cbe41209807", 
+    #   "tags": "breakfast", 
+    #   # "exclude": "1234"
+    # }
+    # results = FoodController.filter(get_database(), filter)
+    return food_plan
     return fact
       
 
@@ -111,3 +160,41 @@ def getAMDR(query, sugar_level):
   fat_percentage = sum(FAT_AMDR) / 2
 
   return (carb_percentage, protein_percentage, fat_percentage)
+ 
+
+
+
+def meal_calory_distribution(number_of_meals, eer):
+  kcal_distribution = ()
+  if number_of_meals == 3:
+    breakfast_kcal = 0.2 * eer
+    lunch_kcal = 0.41 * eer
+    dinner_kcal = 0.39 * eer
+    kcal_distribution = (breakfast_kcal, lunch_kcal, dinner_kcal)
+  else:
+    breakfast_kcal = 0.18 * eer
+    morning_snack_kcal = 0.05 * eer
+    lunch_kcal = 0.36 * eer
+    afternoon_snack = 0.1 * eer
+    dinner_kcal = 0.31 * eer
+    kcal_distribution = (breakfast_kcal, morning_snack_kcal, lunch_kcal, afternoon_snack, dinner_kcal)
+  
+  return kcal_distribution
+
+class FoodGroups():
+  def __init__(self):
+    self.cereals = "653e83a8fe351cbe412097ed"
+    self.startchy_roots = "653e83aafe351cbe412097f0"
+    self.legumes = "653e83aafe351cbe412097f3"
+    self.vegetables = "653e83aafe351cbe412097f6"
+    self.fruits="653e83abfe351cbe412097f9"
+    self.dairy="653e83abfe351cbe412097fb"
+    self.meats_and_poultry="653e83abfe351cbe412097fd"
+    self.fish="653e83abfe351cbe412097ff"
+    self.oils_fats="653e83acfe351cbe41209801"
+    self.nuts_seeds="653e83acfe351cbe41209803"
+    self.sweeteners="653e83acfe351cbe41209805"
+    self.beverages="653e83acfe351cbe41209807"
+    self.condiments="653e83adfe351cbe41209809"
+    self.insects="653e83adfe351cbe4120980b"
+    self.mixed = "653e83adfe351cbe4120980d"

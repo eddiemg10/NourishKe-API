@@ -46,5 +46,5 @@ class ExplanationModule():
     
     def x_sugar_levels(self, levels):
         return Explanation(
-            text=f"Your blood sugar levels : {levels['blood_sugar_level'][0]['value']} {levels['blood_sugar_level'][0]['units']} indicate a {levels['level']} blood sugar level. The recommended foods have therefore factored this in mind",
+            text=f"Your blood sugar levels : {levels['blood_sugar_level'][0]['value']} {levels['blood_sugar_level'][0]['units'].value} indicate a {levels['level']} blood sugar level. The recommended foods have therefore factored this in mind",
         link="Link to docs") #TODO: link to docs

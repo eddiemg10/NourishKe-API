@@ -96,7 +96,7 @@ class KB():
         else:
             sugar_levels = interpret_blood_sugar(Req(fact.blood_sugar_history[0]))
             self.cons_infer_blood_sugar_level = Consequent({
-                "fact_updates" : {"blood_sugar_level": sugar_levels},
+                "fact_updates" : {"blood_sugar_level": sugar_levels, "sugar_level": sugar_levels["level"]},
                 "explanation" : self.Explanations.x_sugar_levels(sugar_levels),
                 "filter": {
                     "amdr" : sugar_levels

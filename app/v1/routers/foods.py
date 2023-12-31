@@ -19,7 +19,6 @@ class TagUpdate(BaseModel):
 
 @router.get("/tag")
 async def get_untagged_foods(db = Depends(get_database), api_key: str = Security(apikey.get_api_key)):
-    return api_key
     return FoodController.noGI(db)
 
 @router.put("/tag/{id}")
@@ -31,7 +30,8 @@ async def get_foods(db = Depends(get_database),
                     page: int = Query(1, description="Page number, starting from 1"),
                     size: int = Query(10, description="Number of items per page"),
                     groups: list[str] = Query(None, description="Filter by specifying the food group(s) using Group Ids"),
-                    api_key: str = Security(apikey.get_api_key)):
+                    # api_key: str = Security(apikey.get_api_key)
+                    ):
     """
     Returns a list of food items with pagination and size
     """
