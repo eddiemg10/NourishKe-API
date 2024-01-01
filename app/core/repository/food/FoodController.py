@@ -6,7 +6,7 @@ from fastapi import Depends, status, HTTPException
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from random import randint
-
+from app.core.repository.expertipy.engine import FoodGroups
 
 def noGI(db):
     foods = db.foods.find({ "GI": { "$exists": False } })
@@ -85,6 +85,7 @@ def random(db):
     return serializeDict(random_food)
 
 def filter(db, query, sort_by="GI"):
+    FG = FoodGroups()
     # Define the base query
     base_query = {}
 
@@ -106,11 +107,21 @@ def filter(db, query, sort_by="GI"):
         base_query["foodgroup_id"] = {"$in": [ObjectId(group) for group in groups]}
 
     if "tags" in query:
-        tags_query = {"tag": {"$regex": f'{query["tags"]},|,{query["tags"]}$|^ {query["tags"]},|, {query["tags"]},|, {query["tags"]}$'}}
-        base_query.update(tags_query)
+        tags_value = query["tags"]
+        if tags_value == "":
+            # If tags is an empty string, retrieve foods where the tag field is empty
+            base_query["$or"] = [{"tag": {"$exists": False}}, {"tag": ""}]
+        else:
+            # Otherwise, perform the regex query
+            tags_query = {"tag": {"$regex": f'{tags_value},|,{tags_value}$|^ {tags_value},|, {tags_value},|, {tags_value}$'}}
+            base_query.update(tags_query)
 
     if "exclude" in query:
-        base_query["group"] = {"$ne": query["exclude"]}
+        exclude_options = {"meat": FG.meats_and_poultry, "fish": FG.fish, "dairy": FG.dairy}  # Map exclude options to group_ids
+        exclude_values = query["exclude"]
+        exclude_group_ids = [exclude_options.get(exclude_value) for exclude_value in exclude_values if exclude_options.get(exclude_value)]
+        if exclude_group_ids:
+            base_query["foodgroup_id"] = {"$nin": [ObjectId(group_id) for group_id in exclude_group_ids]}
 
     # Sort by the specified field (default: "GI")
     sort_field = sort_by if sort_by in ["GI", "location", "group", "tags"] else "GI"
@@ -125,7 +136,6 @@ def filter(db, query, sort_by="GI"):
 
     # for group_id, foods in grouped_results.items():
     #     grouped_results[group_id] = sorted(foods, key=lambda x: x.get("GI", 0))
-    print(grouped_results)
     return grouped_results
     return serializeDict(grouped_results)
     # Perform the query

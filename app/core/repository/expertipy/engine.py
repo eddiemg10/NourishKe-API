@@ -17,7 +17,7 @@ def recommend():
     "height": 180,
     "weight": 65,
     "bmi": 23,
-    "age": 19,
+    "age": 0,
     "gender": "male",
     "coords": (39,-3),
     "pal": {"pal":"active", "value": 2.43},
@@ -40,7 +40,7 @@ def recommend():
       "indian"
     ],
     "exclude": [
-      "meat"
+      "fish", "meat"
     ],
     "_id": "string",
   }
@@ -106,18 +106,37 @@ def recommend():
       "tags": "breakfast", 
       # "exclude": "1234"
       }
+      if fact.age < 1:
+        breakfast_filter['group'] = [FG.dairy]
+        breakfast_filter['tags'] = "infant"
+      print(breakfast_filter)
       breakfast_results = FoodController.filter(get_database(), breakfast_filter)
       food_plan.update({"breakfast": breakfast_results})
 
+      ################################
+      groups = [FG.mixed, FG.vegetables, FG.legumes, FG.fruits]
+      if "meat" in fact.exclude:
+        groups.append(FG.fish)
+      if "fish" in fact.exclude:
+        groups.append(FG.meats_and_poultry)
+    
       main_meal_filter = {
       "GI": (0, 85), 
       "group": [FG.mixed, FG.vegetables, FG.legumes, FG.meats_and_poultry, FG.fruits], 
       "tags": "", 
-      # "exclude": "1234"
+      "exclude": ["meat"]
       }
       main_meal_results = FoodController.filter(get_database(), main_meal_filter)
       food_plan.update({"main_meal": main_meal_results})
-              
+      
+      snack_filter = {
+      "GI": (0, 85), 
+      "group": [FG.dairy, FG.nuts_seeds, FG.vegetables, FG.fruits], 
+      "tags": "snack", 
+      # "exclude": ["meat"]
+      }
+      snack_results = FoodController.filter(get_database(), snack_filter)
+      food_plan.update({"snacks": main_meal_results})
     else:
       kcal_distribution = meal_calory_distribution(number_of_meals, fact.eer)
       breakfast_kcal, lunch_kcal, dinner_kcal = kcal_distribution
