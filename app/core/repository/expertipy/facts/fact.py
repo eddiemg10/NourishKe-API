@@ -8,7 +8,7 @@ class Fact():
     bmi: float
     age: int 
     gender: str
-    coords: tuple
+    coords: list
     pal: PALOut
     eer: float 
     HbA1C: BloodSugar | None
@@ -29,7 +29,7 @@ class Fact():
         self.HbA1C = patient['HbA1C']
         self.blood_sugar_history = patient['blood_sugar_history']
         # self.blood_sugar_level = patient['blood_sugar_level']
-        self.cuisine = patient['cuisine']
+        # self.cuisine = patient['cuisine']
         self.exclude = patient['exclude']
 
     def update(self, updates):

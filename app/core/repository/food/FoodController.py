@@ -98,7 +98,16 @@ def filter(db, query, sort_by="GI"):
 
     # Check other filters
     if "location" in query:
-        base_query["location"] = query["location"]
+        location_value = query["location"]
+        if location_value:
+            location_query = {"location": {"$regex": f'{location_value}|{location_value},|,{location_value}$|^ {location_value},|, {location_value},|, {location_value}$'}}
+            base_query.update(location_query)
+    
+    if "cuisine" in query:
+        location_value = query["cuisine"]
+        if location_value:
+            location_query = {"location": {"$regex": f'{location_value},{location_value},|,{location_value}$|^ {location_value},|, {location_value},|, {location_value}$'}}
+            base_query.update(location_query)
 
     if "group" in query:
         # groups = []
@@ -115,7 +124,7 @@ def filter(db, query, sort_by="GI"):
             base_query["$or"] = [{"tag": {"$exists": False}}, {"tag": ""}]
         else:
             # Otherwise, perform the regex query
-            tags_query = {"tag": {"$regex": f'{tags_value},|,{tags_value}$|^ {tags_value},|, {tags_value},|, {tags_value}$'}}
+            tags_query = {"tag": {"$regex": f'{tags_value}|{tags_value},|,{tags_value}$|^ {tags_value},|, {tags_value},|, {tags_value}$'}}
             base_query.update(tags_query)
 
     if "exclude" in query:
@@ -129,12 +138,30 @@ def filter(db, query, sort_by="GI"):
     sort_field = sort_by if sort_by in ["GI", "location", "group", "tags"] else "GI"
     cursor = db.foods.find(base_query).sort(sort_field)
 
+    group_map = {
+        "653e83a8fe351cbe412097ed" : "Cereals and cereal products",
+        "653e83aafe351cbe412097f0" : "Starchy roots, bananas and tubers",
+        "653e83aafe351cbe412097f3" : "Legumes and pulses",
+        "653e83aafe351cbe412097f6" : "Vegetables and vegetable products",
+        "653e83abfe351cbe412097f9" : "Fruits and fruit products",
+        "653e83abfe351cbe412097fb" : "Milk and dairy products",
+        "653e83abfe351cbe412097fd" : "Meats, poultry and eggs",
+        "653e83abfe351cbe412097ff" : "Fish and sea foods",
+        "653e83acfe351cbe41209801" : "Oils and fats",
+        "653e83acfe351cbe41209803" : "Nuts and seeds",
+        "653e83acfe351cbe41209805" : "Sugar and sweetened products",
+        "653e83acfe351cbe41209807" : "Beverages",
+        "653e83adfe351cbe41209809" : "Condiments and spices",
+        "653e83adfe351cbe4120980b" : "Insects",
+        "653e83adfe351cbe4120980d" : "Mixed dishes",
+    }
     grouped_results = {}
     for food in serializeList(cursor):
         group_id = str(food.get("foodgroup_id", ""))
-        if group_id not in grouped_results:
-            grouped_results[group_id] = []
-        grouped_results[group_id].append(food)
+        group_name = group_map[group_id]
+        if group_name not in grouped_results:
+            grouped_results[group_map[group_id]] = []
+        grouped_results[group_map[group_id]].append(food)
 
     # for group_id, foods in grouped_results.items():
     #     grouped_results[group_id] = sorted(foods, key=lambda x: x.get("GI", 0))

@@ -20,8 +20,8 @@ class KB():
         # Rule 1: (Hypoglycemia) If Hypoglycemia detected
         self.ant_is_hypoglycemic = Antecedent(value=getattr(self.fact, "sugar_level", None), operation=Operation.equals , reference="hypoglycemic")
         # if person if hypoglycemic, check whether it's sports induced
-        self.ant_is_very_active = Antecedent(value=fact.pal['pal'], operation=Operation.equals, reference=PALType.very_active) # Sports induced Hypoglycemia
-        self.ant_is_active = Antecedent(value=fact.pal['pal'], operation=Operation.equals, reference=PALType.active) # Sports induced Hypoglycemia
+        self.ant_is_very_active = Antecedent(value=fact.pal.pal, operation=Operation.equals, reference=PALType.very_active) # Sports induced Hypoglycemia
+        self.ant_is_active = Antecedent(value=fact.pal.pal, operation=Operation.equals, reference=PALType.active) # Sports induced Hypoglycemia
 
         self.ant_is_active_individual = Antecedent(value=getattr(self.fact, "is_an_active_person", None), operation=Operation.equals, reference=True)
         
@@ -35,7 +35,7 @@ class KB():
         
         self.ant_has_history = Antecedent(value=getattr(self.fact, "blood_sugar_history", None), operation=Operation.exists, reference=None)
         
-        self.ant_has_cuisine = Antecedent(value=getattr(self.fact, "cuisine", None), operation=Operation.exists, reference=None)
+        # self.ant_has_cuisine = Antecedent(value=getattr(self.fact, "cuisine", None), operation=Operation.exists, reference=None)
         
         self.ant_has_exclusions = Antecedent(value=getattr(self.fact, "exclude", None), operation=Operation.exists, reference=None)
         
@@ -62,12 +62,12 @@ class KB():
             "explanation" : self.Explanations.x_estimaed_energy_requirements,
         })
 
-        self.cons_infer_cuisine = Consequent({
-                "explanation" : self.Explanations.x_cuisine,
-                "filter": {
-                    "cuisine" : self.fact.cuisine
-                }
-        })
+        # self.cons_infer_cuisine = Consequent({
+        #         "explanation" : self.Explanations.x_cuisine,
+        #         "filter": {
+        #             "cuisine" : self.fact.cuisine
+        #         }
+        # })
 
         self.cons_infer_exclusions = Consequent({
                 "explanation" : self.Explanations.x_exclusions,
@@ -121,8 +121,8 @@ class KB():
         # Infer the patient's estimated energy requirements
         self.rules.append(ProductionRule(id=6, query=self.query, fact=self.fact, antecedents=[self.ant_has_eer], consequents=[self.cons_infer_eer]))
         # Infer user's cuisine preference
-        if len(fact.cuisine) > 0:
-            self.rules.append(ProductionRule(id=7, query=self.query, fact=self.fact, antecedents=[self.ant_has_cuisine], consequents=[self.cons_infer_cuisine]))
+        # if len(fact.cuisine) > 0:
+        #     self.rules.append(ProductionRule(id=7, query=self.query, fact=self.fact, antecedents=[self.ant_has_cuisine], consequents=[self.cons_infer_cuisine]))
         # Infer user's exclusions
         if len(fact.exclude) > 0:
             self.rules.append(ProductionRule(id=8, query=self.query, fact=self.fact, antecedents=[self.ant_has_exclusions], consequents=[self.cons_infer_exclusions]))

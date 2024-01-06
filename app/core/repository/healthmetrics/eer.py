@@ -200,3 +200,13 @@ def calculate_eer(request: EERIn):
     # print(f"{lhs_constant} + ({age_coefficient} * {age}) + ({height_coefficient} * {height}) + ({weight_coefficient} * {weight}) + {rhs_constant}")
     EER = lhs_constant + (age_coefficient * age) + (height_coefficient * height) + (weight_coefficient * weight) + rhs_constant
     return {"value": EER}
+
+def calculate_eer_from_dict(request):
+    age, height, weight, gender, PAL = request["age"], request["height"], request["weight"], request["gender"], request["pal"]
+    coefficients = get_coefficients(age, gender, PAL)
+    lhs_constant, age_coefficient, height_coefficient, weight_coefficient, rhs_constant = coefficients
+    
+    # EER Forumla
+    # print(f"{lhs_constant} + ({age_coefficient} * {age}) + ({height_coefficient} * {height}) + ({weight_coefficient} * {weight}) + {rhs_constant}")
+    EER = lhs_constant + (age_coefficient * age) + (height_coefficient * height) + (weight_coefficient * weight) + rhs_constant
+    return {"value": EER}
