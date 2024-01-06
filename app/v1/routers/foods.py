@@ -24,7 +24,11 @@ async def get_untagged_foods(db = Depends(get_database), api_key: str = Security
 @router.put("/tag/{id}")
 async def tag_food(id: str, request:TagUpdate, db = Depends(get_database)):
     return FoodController.update(id, request, db)
-    
+
+@router.get("/locations")
+async def tag_food(db = Depends(get_database)):
+    return FoodController.updateLocations(db)
+
 @router.get("", response_model=list[FoodOut])
 async def get_foods(db = Depends(get_database),
                     page: int = Query(1, description="Page number, starting from 1"),

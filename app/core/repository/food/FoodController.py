@@ -7,6 +7,8 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from random import randint
 from app.core.repository.expertipy.engine import FoodGroups
+import csv 
+
 
 def noGI(db):
     foods = db.foods.find({ "GI": { "$exists": False } })
@@ -143,3 +145,35 @@ def filter(db, query, sort_by="GI"):
     # result = serializeList(db.foods.find(base_query))
 
     return result
+
+
+def updateLocations(db):    
+    updates = []
+    with open('output.csv', 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        # Iterate through each row in the CSV
+        for row in csv_reader:
+            index_field = row['index']
+            location_field = row['location']
+
+            # Check if the location field is not blank
+            if location_field.strip():
+                # Query MongoDB to find the document where kfct field is equal to the index field
+                result = db.foods.find_one({'code_kfct': index_field})
+
+                # If a document is found, display the id along with index and location fields
+                if result:
+                    id = result['_id']
+                    print(f"ID: {result['_id']}, Index: {index_field}, Location: {location_field}")
+                    update = serializeDict({
+                        "location": location_field
+                    })
+                    updated_result = db.foods.update_one(
+                    {"_id": ObjectId(id)},
+                    {"$set": {"location": location_field}}
+                    )
+                    print(db.foods.find_one({'code_kfct': index_field}))
+
+                
+    print(updates)
+    return "done"

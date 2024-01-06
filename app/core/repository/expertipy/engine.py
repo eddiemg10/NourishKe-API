@@ -8,8 +8,7 @@ from fastapi import Depends
 
 
 def recommend():
-    
-   
+  
 
     # Build a fact
 
@@ -17,7 +16,7 @@ def recommend():
     "height": 180,
     "weight": 65,
     "bmi": 23,
-    "age": 0,
+    "age": 18,
     "gender": "male",
     "coords": (39,-3),
     "pal": {"pal":"active", "value": 2.43},
@@ -70,8 +69,13 @@ def recommend():
       # print(vars(knowledge_base.fact), "\n\n")
       for rule in rules:
         if rule.evaluate() and rule.id not in visited_rules:
-          query_builder, fact = rule.execute()  # Pass the fact to execute method
+          query, fact = rule.execute()  # Pass the fact to execute method
+          if not len(query) < len(query_builder):
+            query_builder = query
+          else:
+            query_builder.append(query)
           visited_rules.add(rule.id)
+          print(query_builder)
           print(visited_rules)
           rule_triggered = True
       ctr += 1
@@ -79,15 +83,14 @@ def recommend():
       if not rule_triggered:
         print("No match found")
         break
-
-
+    
     sugar_level = getattr(fact, "blood_sugar_level", None)['level']
     carb_percentage, protein_percentage, fat_percentage = getAMDR(query_builder, sugar_level)
     
     cals_from_carbs = carb_percentage/100*fact.eer
     cals_from_protein = protein_percentage/100*fact.eer
     cals_from_fat = fat_percentage/100*fact.eer
-
+    return fact
     
     # return (carb_percentage, protein_percentage, fat_percentage)
 

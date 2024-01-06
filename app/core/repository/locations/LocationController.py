@@ -149,3 +149,4 @@ def find_county_and_highlight(coordinate, highlight=True, image_flag = False):
 
     
     # return highlighted_county['COUNTY'] if highlighted_county is not None else 'Not Found'
+    
