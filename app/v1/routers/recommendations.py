@@ -9,7 +9,9 @@ router = APIRouter(tags=["Recommendations"], prefix="/recommendations")
 #     return engine.recommend()
 
 @router.post("")
-async def generate_recommendation(request: RecommendationProfile):
+# async def generate_recommendation(request: RecommendationProfile):
+async def generate_recommendation(request):
+    print(request)
 #     req = {
 #     "height": 180,
 #     "weight": 65,
