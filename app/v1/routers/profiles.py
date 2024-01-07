@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, status, HTTPException, Path
 from app.core.database import get_database
 from app.core.schemas.Profile import ProfileOut, Profile
 from app.core.repository.profiles import ProfileController
+from app.core.schemas.Profile import RecommendationProfile
 
 
 router = APIRouter(tags=["Profiles"], prefix="/profiles")
@@ -11,8 +12,12 @@ async def get_all_patient_profiles(db = Depends(get_database)):
     return ProfileController.index(db=db)
 
 
-@router.post("", response_model=Profile)
-async def create_patient_profile(request: Profile, db = Depends(get_database)):
+# @router.post("", response_model=Profile)
+# async def create_patient_profile(request: Profile, db = Depends(get_database)):
+#     return ProfileController.create(request=request, db=db)
+
+@router.post("", response_model=RecommendationProfile)
+async def create_patient_profile(request: RecommendationProfile, db = Depends(get_database)):
     return ProfileController.create(request=request, db=db)
 
 @router.get("/{id}", response_model=ProfileOut)
@@ -20,7 +25,7 @@ async def get_single_patient_profile(id: str =Path(description="ID of profile to
     return ProfileController.show(id=id, db=db)
 
 @router.patch("/{id}", response_model=ProfileOut)
-async def update_patient_profile(request: Profile, id: str =Path(description="ID of profile to fetch"),  db = Depends(get_database)):
+async def update_patient_profile(request: RecommendationProfile, id: str =Path(description="ID of profile to fetch"),  db = Depends(get_database)):
     return ProfileController.update(id, request=request, db=db)
 
 

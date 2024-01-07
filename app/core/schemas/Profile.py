@@ -17,11 +17,8 @@ class Profile(BaseModel):
     eer: float = Field(None, description="Estimated Energy requirement value", example = 2500.6)
     HbA1C: BloodSugar = Field(None, description="Average blood sugar (glucose) over the past two to three months.")
     blood_sugar_history: list[BloodSugarEntry] = Field(None, description="History of patient's recorded blood sugar levels")
-    cuisine: list[str] = Field(None, description="Preferred cuisines", example=["Indian"])
-    exclude: list[str] = Field(None, description="Foods to exclude", example=["meat"])
-
-class ProfileOut(Profile):
-    id: str = Field(..., alias="_id")
+    # cuisine: list[str] = Field(None, description="Preferred cuisines", example=["Indian"])
+    exclude: list[str] | None = Field(None, description="Foods to exclude", example=["meat"])
 
 
 class ProfileUpdate(Profile):
@@ -33,9 +30,13 @@ class RecommendationProfile(BaseModel):
     weight: int = Field(None, description="Weight of patient in kg", example=65)
     age: int = Field(None, description="Age of the patient", example=19)
     gender: Gender = Field(None, description="Gender of the patient", example="male")
-    location: str = Field(None, description="General Location Area of user", example="coast")
+    # location: str = Field(None, description="General Location Area of user", example="coast")
     pal: PALOut = Field(None, description="Physical Activity Level", example={"pal":"active", "value": 2.43})
-    coords: list[float] = Field(None, description="Long | Lat coordinates", example=[39, -3])
-    HbA1C: BloodSugar = Field(None, description="Average blood sugar (glucose) over the past two to three months.")
+    coords: list[float] | None = Field(None, description="Long | Lat coordinates", example=[39, -3])
+    HbA1C: BloodSugar|None = Field(None, description="Average blood sugar (glucose) over the past two to three months.")
     blood_sugar_history: list[BloodSugarEntry] = Field(None, description="History of patient's recorded blood sugar levels")
     exclude: list[str] = Field(None, description="Foods to exclude", example=["meat"])
+
+
+class ProfileOut(RecommendationProfile):
+    id: str = Field(..., alias="_id")

@@ -36,8 +36,8 @@ def recommend(req: RecommendationProfile):
     #   "value": 70,
     #   "units": "mg/dL"
     # },
-    "HbA1C": req.HbA1C.__dict__,
-    "blood_sugar_history": req.blood_sugar_history,
+    "HbA1C": req.HbA1C.__dict__ if req.HbA1C else None,
+    "blood_sugar_history": req.blood_sugar_history if req.blood_sugar_history else None,
     "exclude": req.exclude,
   }
     # return req.blood_sugar_history
@@ -91,7 +91,37 @@ def recommend(req: RecommendationProfile):
     cals_from_fat = fat_percentage/100*fact.eer
     
     # return (carb_percentage, protein_percentage, fat_percentage)
+    
+    sgr_level = fact.__dict__.get("sugar_level", None)
+    is_active = fact.__dict__.get("is_an_active_person", False)
+    has_sports_hypo = fact.__dict__.get("has_sports_hypoglycemia", False)
+    usr_location = fact.__dict__.get("location", None)
 
+    if sgr_level == "hypoglycemic":
+      GI_RANGE = (50, 69)
+    elif sgr_level == "prediabetic":
+      GI_RANGE = (20, 69)
+    elif sgr_level == "diabetic":
+      GI_RANGE = (0, 55)
+    else:
+      GI_RANGE = (0, 100)
+    
+    if is_active:
+      GI_RANGE = (GI_RANGE[0], GI_RANGE[0]+5)
+
+    sugar_lvls = ["normal", "prediabetic", "diabetic", "hypoglycemic"]
+    if usr_location:
+      LOCATION_TO_SEARCH = usr_location['region']
+      GI_RANGE = (0, 100)
+    else:
+      LOCATION_TO_SEARCH = None
+
+    # return {
+    #   "GI_range": GI_RANGE,
+    #   "location":LOCATION_TO_SEARCH,
+    #   "exclude": fact.exclude,
+    #   "fact": fact
+    # }
     foods = FoodController.index(page=1, size=600 , db=get_database(), groups=None)
     
     FG = FoodGroups()
@@ -108,11 +138,11 @@ def recommend(req: RecommendationProfile):
       kcal_distribution = meal_calory_distribution(number_of_meals, fact.eer)
       breakfast_kcal, morning_snack_kcal, lunch_kcal, afternoon_snack_kcal, dinner_kcal = kcal_distribution
       breakfast_filter =  {
-      "GI": (0, 55), 
+      "GI": GI_RANGE, 
       "group": [FG.beverages, FG.cereals, FG.startchy_roots, FG.fruits], 
       "tags": "breakfast",
-      # "location": "coast" 
-      # "exclude": "1234"
+      "location": LOCATION_TO_SEARCH,
+      "exclude": fact.exclude
       }
       if fact.age < 1:
         breakfast_filter = {}
@@ -124,8 +154,9 @@ def recommend(req: RecommendationProfile):
         "from_carbs": carb_percentage/100*breakfast_kcal,
         "from_protein": protein_percentage/100*breakfast_kcal,
         "other": fat_percentage/100*breakfast_kcal
-      }
-      food_plan.update({"breakfast": [breakfast_label, breakfast_results]})
+      } 
+      breakfast_groups = list(breakfast_results.keys())
+      food_plan.update({"breakfast": [breakfast_label, breakfast_groups, breakfast_results]})
 
       ################################
       groups = [FG.mixed, FG.meats_and_poultry, FG.fish, FG.vegetables, FG.legumes, FG.fruits]
@@ -138,11 +169,11 @@ def recommend(req: RecommendationProfile):
       
     
       main_meal_filter = {
-      # "GI": (0, 100), 
+      "GI": (0, GI_RANGE[1]), 
       "group": groups, 
       "tags": "", 
-      "location": "coast",
-      # "exclude": ["meat"]
+      "location": LOCATION_TO_SEARCH,
+      "exclude": fact.exclude
       }
       if fact.age < 1:
         main_meal_filter = {}
@@ -195,11 +226,11 @@ def recommend(req: RecommendationProfile):
       # return main_meal_results
 
       snack_filter = {
-      "GI": (0, 85), 
+      "GI": GI_RANGE, 
       "group": [FG.dairy, FG.nuts_seeds, FG.vegetables, FG.fruits], 
       "tags": "snack", 
-      # "location": "coast"
-      # "exclude": ["meat"]
+      "location": LOCATION_TO_SEARCH,
+      "exclude": fact.exclude
       }
       if fact.age < 1:
         snack_filter = {}
@@ -208,15 +239,18 @@ def recommend(req: RecommendationProfile):
 
       early_snack_results = {}
       late_snack_results = {}
-      early_snack_results, late_snack_results = splitFods(main_meal_results, early_snack_results, late_snack_results)
+      early_snack_results, late_snack_results = splitFods(snack_results, early_snack_results, late_snack_results)
       early_snack_label = {
         "recommended_calories": morning_snack_kcal,
         "from_carbs": carb_percentage/100*morning_snack_kcal,
         "from_protein": protein_percentage/100*morning_snack_kcal,
         "other": fat_percentage/100*morning_snack_kcal
       }
-      food_plan.update({"morning_snack": [early_snack_label, early_snack_results]})
-      food_plan.update({"lunch": [lunch_label, lunch_results]})
+      early_snack_groups = list(early_snack_results.keys())
+      lunch_groups = list(lunch_results.keys())
+
+      food_plan.update({"morning_snack": [early_snack_label, early_snack_groups, early_snack_results]})
+      food_plan.update({"lunch": [lunch_label, lunch_groups, lunch_results]})
 
       late_snack_label = {
         "recommended_calories": afternoon_snack_kcal,
@@ -224,8 +258,11 @@ def recommend(req: RecommendationProfile):
         "from_protein": protein_percentage/100*afternoon_snack_kcal,
         "other": fat_percentage/100*afternoon_snack_kcal
       }
-      food_plan.update({"afternoon_snack": [late_snack_label, late_snack_results]})
-      food_plan.update({"dinner": [dinner_label, dinner_results]})
+      late_snack_groups = list(late_snack_results.keys())
+      dinner_groups = list(dinner_results.keys())
+
+      food_plan.update({"afternoon_snack": [late_snack_label, late_snack_groups, late_snack_results]})
+      food_plan.update({"dinner": [dinner_label, dinner_groups, dinner_results]})
 
       # food_plan.update({"snacks": snack_results})
     else:

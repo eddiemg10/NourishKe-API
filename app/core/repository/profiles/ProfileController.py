@@ -1,4 +1,4 @@
-from ...schemas.Profile import Profile, ProfileOut, ProfileUpdate
+from ...schemas.Profile import Profile, ProfileOut, RecommendationProfile
 from ...database import get_database
 from ..serialize import serializeDict, serializeList
 from fastapi import Depends, status, HTTPException, Path
@@ -22,7 +22,7 @@ def show(id : str, db):
     return serializeDict(profile)
 
 
-def create(request: Profile, db):
+def create(request: RecommendationProfile, db):
     hst = []
     for reading in request.blood_sugar_history:
         hst.append(dict(reading))
@@ -31,18 +31,17 @@ def create(request: Profile, db):
             "height": request.height,
             "weight": request.weight,   
             "age": request.age,   
-            "location": request.location,
-            "pal": request.pal,   
-            "eer": request.eer,   
+            "gender": request.gender,
+            "pal": dict(request.pal),   
+            "coords": request.coords,   
             "HbA1C": dict(request.HbA1C),   
             "blood_sugar_history": [dict(hst) for hst in request.blood_sugar_history],   
-            "cuisine": request.cuisine,   
             "exclude": request.exclude,   
         }
     try:
         inserted_profile =  db.profiles.insert_one(profile)
-    except Exception:
-        print(Exception)
+    except Exception as e:
+        print(e)
         raise HTTPException(status_code=500, detail="Could not create profile")
     return serializeDict(db.profiles.find_one({"_id" : inserted_profile.inserted_id}))
 

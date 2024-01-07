@@ -29,12 +29,12 @@ async def calculate_estimated_energy_requirements(request: EERIn, api_key: str =
     """
     return eer.calculate_eer(request)
 
-@router.get("/amdr")
-async def acceptable_macronutrient_distribution_range(api_key: str = Security(apikey.get_api_key)):
-    """
-    Calculates the acceptable_macronutrient_distribution_range
-    """
-    return "Hello"
+# @router.get("/amdr")
+# async def acceptable_macronutrient_distribution_range(api_key: str = Security(apikey.get_api_key)):
+#     """
+#     Calculates the acceptable_macronutrient_distribution_range
+#     """
+#     return "Hello"
 
 # @router.get("/bloodsugar")
 # async def bloog_sugar_levels():

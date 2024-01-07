@@ -4,9 +4,9 @@ from app.core.schemas.Profile import RecommendationProfile
 
 router = APIRouter(tags=["Recommendations"], prefix="/recommendations")
 
-@router.get("/test")
-async def get_recommendation():
-    return engine.recommend()
+# @router.get("/test")
+# async def get_recommendation():
+#     return engine.recommend()
 
 @router.post("")
 async def generate_recommendation(request: RecommendationProfile):
