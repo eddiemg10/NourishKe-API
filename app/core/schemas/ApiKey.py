@@ -5,6 +5,7 @@ from pydantic import ConfigDict, BaseModel, Field
 import datetime
 
 class ApiKey(BaseModel):
+    id: str = Field(..., alias="_id")
     value: str = Field(None, description="Hashed value of the API Key", example="XXXX_XXX")
     user: str = Field(None, description="Email of who owns the Key", example="john@example.com")
     description: str = Field(None, description="Description of what the key is for", example="API Key for the NourishKe App")

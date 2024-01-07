@@ -25,4 +25,4 @@ app.include_router(v1_router, prefix="/api")
 
 @app.get("/")
 def root():
-    return {"Message": "Hello There"}
+    return {"Message": "Welcome to the NourishKe API. Navigate to /docs for the SwaggerUI specification and /redoc for redoc"}
