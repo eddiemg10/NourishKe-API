@@ -26,15 +26,15 @@ class ProfileUpdate(Profile):
 
 
 class RecommendationProfile(BaseModel):
-    height: float = Field(None, description="Height of patient in cm", example=180)
-    weight: int = Field(None, description="Weight of patient in kg", example=65)
-    age: int = Field(None, description="Age of the patient", example=19)
-    gender: Gender = Field(None, description="Gender of the patient", example="male")
+    height: float | None = Field(None, description="Height of patient in cm", example=180)
+    weight: int| None = Field(None, description="Weight of patient in kg", example=65)
+    age: int| None = Field(None, description="Age of the patient", example=19)
+    gender: Gender| None = Field(None, description="Gender of the patient", example="male")
     # location: str = Field(None, description="General Location Area of user", example="coast")
-    pal: PALOut = Field(None, description="Physical Activity Level", example={"pal":"active", "value": 2.43})
+    pal: PALOut| None = Field(None, description="Physical Activity Level", example={"pal":"active", "value": 2.43})
     coords: list[float] | None = Field(None, description="Long | Lat coordinates", example=[39, -3])
     HbA1C: BloodSugar|None = Field(None, description="Average blood sugar (glucose) over the past two to three months.")
-    blood_sugar_history: list[BloodSugarEntry] = Field(None, description="History of patient's recorded blood sugar levels")
+    blood_sugar_history: list[BloodSugarEntry]| None = Field(None, description="History of patient's recorded blood sugar levels")
     exclude: list[str] = Field(None, description="Foods to exclude", example=["meat"])
 
 
