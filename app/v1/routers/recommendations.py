@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 from app.core.repository.expertipy import engine
-from app.core.schemas.Profile import RecommendationProfile
+from app.core.schemas.Profile import RecommendationProfile, TestProfile
 
 router = APIRouter(tags=["Recommendations"], prefix="/recommendations")
 
@@ -33,4 +33,10 @@ async def generate_recommendation(request: RecommendationProfile):
 #     "exclude": ["fish"],
 #     "_id": "string",
 #   }
+    return engine.recommend(request)
+
+@router.post("/mobile")
+async def generate_recommendation(request: TestProfile):
+    request.blood_sugar_history = [request.blood_sugar_history]
+
     return engine.recommend(request)
