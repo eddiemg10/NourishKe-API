@@ -142,4 +142,4 @@ cython_debug/
 
 
 # Firebase
-firebase_admin.json
+# firebase_admin.json
