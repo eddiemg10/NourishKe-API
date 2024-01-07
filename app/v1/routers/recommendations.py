@@ -12,7 +12,6 @@ router = APIRouter(tags=["Recommendations"], prefix="/recommendations")
 async def generate_recommendation(request: RecommendationProfile):
 # async def generate_recommendation(request):
     print(request)
-    return request
 #     req = {
 #     "height": 180,
 #     "weight": 65,
