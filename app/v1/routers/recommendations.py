@@ -35,8 +35,8 @@ async def generate_recommendation(request: RecommendationProfile):
 #   }
     return engine.recommend(request)
 
-@router.post("/mobile")
-async def generate_recommendation(request: TestProfile):
-    request.blood_sugar_history = [request.blood_sugar_history]
+# @router.post("/mobile")
+# async def generate_recommendation(request: TestProfile):
+#     request.blood_sugar_history = [request.blood_sugar_history]
 
-    return engine.recommend(request)
+#     return engine.recommend(request)
