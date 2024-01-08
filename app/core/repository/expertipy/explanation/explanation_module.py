@@ -25,11 +25,11 @@ class ExplanationModule():
 
         self.x_pal = Explanation(
             text=f"Based on the activities you engage in, Your estimated Basal Metabolic Rate (BMR) over 24 hours is {fact.pal.value}, which indicates a Phsical Activity Level (PAL) of {fact.pal.pal}",
-        link="Link to docs"), #TODO: Link to docs
+        link="https://www.fao.org/3/y5686e/y5686e07.htm"), #TODO: Link to docs
 
         self.x_estimaed_energy_requirements = Explanation(
             text=f"Based on your age ({fact.age}), gender ({fact.gender}) and PAL ({fact.pal.pal}) your daily Estimated Energy Requirements is {fact.eer} kcal. The recommended foods have been curated to meet this requirement",
-        link="Link to docs"), #TODO: Link to docs
+        link="https://nap.nationalacademies.org/read/26818/chapter/2#4"), #TODO: Link to docs
 
         self.x_infant= Explanation(
             text=f"The age of the patient is too young to recommend any foods."
@@ -50,8 +50,8 @@ class ExplanationModule():
     def x_sugar_levels(self, levels):
         return Explanation(
             # text=f"Your blood sugar levels : {levels['blood_sugar_level'][0]["value"]}{levels['blood_sugar_level'][0]['units'].value} indicate a {levels['level']} blood sugar level. The recommended foods have therefore factored this in mind",
-            text=f"Your blood sugar levels indicate a {levels['level']} blood sugar level. The recommended foods have therefore factored this in mind",
-        link="Link to docs") #TODO: link to docs
+            text=f"Your blood sugar levels indicate a {levels['level']} blood sugar level. The recommended foods have therefore factored this in mind"
+            )
     
     def x_fructose(fructose_cals):
         return Explanation(
