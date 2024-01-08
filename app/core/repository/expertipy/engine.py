@@ -79,7 +79,7 @@ def recommend(req: RecommendationProfile):
         print("No match found")
         break
     
-    query_builder.append(ExplanationModule.x_fructose(0.12 * fact.eer))
+    query_builder.append({"explanation":[ExplanationModule.x_fructose(0.12 * fact.eer)]})
     if fact.age < 1:
       query_builder = [Explanation(text=f"The age of the patient is too young to recommend any foods.")]
     # return query_builder

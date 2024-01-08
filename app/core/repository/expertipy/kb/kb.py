@@ -70,14 +70,14 @@ class KB():
         # })
 
         self.cons_infer_exclusions = Consequent({
-                "explanation" : self.Explanations.x_exclusions,
+                "explanation" : [self.Explanations.x_exclusions],
         })
         
         if self.fact.coords:
             location_details = LocationController.find_county_and_highlight((fact.coords))
             self.cons_infer_location = Consequent({
                 "fact_updates" : {"location": location_details},
-                "explanation" : self.Explanations.x_location(location_details),
+                "explanation" : [self.Explanations.x_location(location_details)],
                 "filter": {
                     "location" : "coast"
                 }
@@ -88,7 +88,7 @@ class KB():
             sugar_levels = interpret_blood_sugar(Req(self.fact.HbA1C))
             self.cons_infer_blood_sugar_level = Consequent({
                 "fact_updates" : {"blood_sugar_level": sugar_levels, "sugar_level": sugar_levels["level"]},
-                "explanation" : self.Explanations.x_sugar_levels(sugar_levels),
+                "explanation" : [self.Explanations.x_sugar_levels(sugar_levels)],
                 "filter": {
                     "amdr" : sugar_levels
                 }
@@ -97,7 +97,7 @@ class KB():
             sugar_levels = interpret_blood_sugar(Req(fact.blood_sugar_history[0].__dict__))
             self.cons_infer_blood_sugar_level = Consequent({
                 "fact_updates" : {"blood_sugar_level": sugar_levels, "sugar_level": sugar_levels["level"]},
-                "explanation" : self.Explanations.x_sugar_levels(sugar_levels),
+                "explanation" : [self.Explanations.x_sugar_levels(sugar_levels)],
                 "filter": {
                     "amdr" : sugar_levels
                 }
